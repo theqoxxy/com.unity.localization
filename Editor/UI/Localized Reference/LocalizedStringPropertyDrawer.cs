@@ -293,7 +293,11 @@ namespace UnityEditor.Localization.UI
             }
 
             #if UNITY_2022_3_OR_NEWER
+            #if UNITY_2023_1_OR_NEWER
+            var context = UnityEditor.Search.SearchService.CreateContext(FilterIds.StringTableProvider, FilterIds.StringTableProviderFilter);
+            #else
             var context = UnityEditor.Search.SearchService.CreateContext(FilterIds.StringTableProvider, FilterIds.StringTableProviderFilter, UnityEditor.Search.SearchFlags.UseSessionSettings);
+            #endif
             #else
             var context = UnityEditor.Search.SearchService.CreateContext(new StringTableSearchProvider(), FilterIds.StringTableProviderFilter);
             #endif
