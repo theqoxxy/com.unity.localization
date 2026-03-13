@@ -5,7 +5,6 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
 using System.Collections.Generic;
 
-
 #if ENABLE_SEARCH
 using UnityEditor.Localization.Search;
 #endif
@@ -99,7 +98,11 @@ namespace UnityEditor.Localization.UI
             }
 
             #if UNITY_2022_3_OR_NEWER
+            #if UNITY_2023_1_OR_NEWER
+            var context = UnityEditor.Search.SearchService.CreateContext(FilterIds.AssetTableProvider, FilterIds.AssetTableProviderFilter);
+            #else
             var context = UnityEditor.Search.SearchService.CreateContext(FilterIds.AssetTableProvider, FilterIds.AssetTableProviderFilter, UnityEditor.Search.SearchFlags.UseSessionSettings);
+            #endif
             #else
             var context = UnityEditor.Search.SearchService.CreateContext(new AssetTableSearchProvider(data.assetType), FilterIds.AssetTableProviderFilter);
             #endif
