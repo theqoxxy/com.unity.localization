@@ -528,6 +528,58 @@ namespace UnityEngine.Localization.Tables
         }
 
         /// <summary>
+        /// Resolves the string key from the numeric ID for the specified table reference.
+        /// The result is cached in the m_Key field for subsequent use, improving performance on repeated calls.
+        /// </summary>
+        /// <param name="tableReference">The table reference that contains the key. Used to access the SharedTableData.</param>
+        /// <returns>
+        /// The string key corresponding to the numeric ID, or null if:
+        /// - The reference type is not Type.Id
+        /// - The SharedTableData cannot be resolved
+        /// - The key ID does not exist in the table
+        /// </returns>
+        /// <remarks>
+        /// This method is particularly useful when working with TableEntryReferences that use numeric IDs,
+        /// as it allows you to obtain the human-readable key name without manually accessing the SharedTableData.
+        /// The cached value is stored in the existing m_Key field and will persist for the lifetime of the object.
+        /// 
+        /// Example usage:
+        /// <code>
+        /// TableReference tableRef = "MyTable";
+        /// TableEntryReference entryRef = 12345L; // ID reference
+        /// 
+        /// // First call - resolves from SharedTableData and caches
+        /// string keyName = entryRef.GetKeyFromId(tableRef);
+        /// 
+        /// // Second call - uses cached value from m_Key
+        /// string cachedKey = entryRef.GetKeyFromId(tableRef); // Fast, no SharedTableData access
+        /// </code>
+        /// </remarks>
+        public string GetKeyFromId(TableReference tableReference)
+        {
+            if (ReferenceType != Type.Id)
+            {
+                Debug.LogWarning($"GetKeyFromId called on a TableEntryReference that is not an Id reference. Current type: {ReferenceType}");
+                return null;
+            }
+        
+            // Return cached key if available
+            if (!string.IsNullOrEmpty(m_Key))
+                return m_Key;
+        
+            var sharedTableData = tableReference.SharedTableData;
+            if (sharedTableData == null)
+            {
+                Debug.LogWarning($"Could not resolve SharedTableData for table reference: {tableReference}");
+                return null;
+            }
+        
+            // Resolve and cache the key
+            m_Key = sharedTableData.GetKey(KeyId);
+            return m_Key;
+        }
+
+        /// <summary>
         /// Compare the TableEntryReference to another TableEntryReference.
         /// </summary>
         /// <param name="obj"></param>
