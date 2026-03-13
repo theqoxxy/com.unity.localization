@@ -63,9 +63,10 @@ namespace UnityEditor.Localization.UI
                 hideAllGroup = false,
                 queryBuilderEnabled = true,
                 hideTabs = true,
-                flags = SearchViewFlags.DisableInspectorPreview | SearchViewFlags.OpenInBuilderMode | SearchViewFlags.ObjectPicker,
-                selectHandler = Select,
-                trackingHandler = Track
+                flags = SearchViewFlags.DisableInspectorPreview | SearchViewFlags.OpenInBuilderMode
+                #if !UNITY_2023_1_OR_NEWER
+                | SearchViewFlags.ObjectPicker
+                #endif
             };
             m_View = UnityEditor.Search.SearchService.ShowPicker(state);
             #else
